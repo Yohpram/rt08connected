@@ -37,21 +37,38 @@ const AppContent = () => {
         <Route path="/products/:id" element={<Orderpage />} />
         <Route path="/user/:id" element={<UserProfile />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/register"  element={<ProtectedRoute redirectTo="/admin"><Register />
+         </ProtectedRoute>
+          } />
         <Route path="/gamepage" element={<GamePage />} />
         <Route path="/home" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/Navbaradmin" element={<Navbaradm />} />
-        <Route path="/homeadmin12" element={<ProtectedRoute><Homeadmin /></ProtectedRoute>} />
+        <Route 
+          path="/homeadmin12" 
+          element={
+            <ProtectedRoute redirectTo="/admin">
+              <Homeadmin />
+            </ProtectedRoute>
+          } 
+        />
         <Route path="/" element={<Home />} />
         <Route path="/order-history" element={<OrderHistory />} />
         <Route path="/surkethistory" element={<SurketHistory />} />
-        <Route path="/orderlist" element={<OrdersList />} />
-        <Route path="/surketlist" element={<SurketList />} />
+        <Route path="/orderlist" element={<ProtectedRoute redirectTo="/admin"><OrdersList />
+         </ProtectedRoute>
+          } />
+        <Route path="/surketlist" element={<ProtectedRoute redirectTo="/admin"><SurketList />
+         </ProtectedRoute>
+          } />
         <Route path="/review" element={<Review />} />
-        <Route path="/createpesan" element={<Createpesan />} />
-        <Route path="/warga" element={<Warga />} />
+        <Route path="/createpesan" element={<ProtectedRoute redirectTo="/admin"><Createpesan />
+         </ProtectedRoute>
+          } />
+        <Route path="/warga" element={<ProtectedRoute redirectTo="/admin"><Warga />
+         </ProtectedRoute>
+          } />
         <Route path="/pesan" element={<Pesan />} />
 
         <Route path="/suket" element={<ProtectedRoute><SurketForm /></ProtectedRoute>} />
