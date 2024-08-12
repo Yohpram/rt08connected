@@ -80,7 +80,7 @@ const Navbar = () => {
         <Link to="/register">
           <Button margin={1}>Register</Button>
         </Link>
-        <Link to="/homeadmin">
+        <Link to="/homeadmin12">
           <Button margin={1}>Home</Button>
         </Link>
         
