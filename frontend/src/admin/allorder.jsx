@@ -40,7 +40,11 @@ const OrdersList = () => {
       try {
         const token = localStorage.getItem('token');
         const data = await getAllOrders(token);
-        setOrders(data.orders);
+
+        // Sort orders by id in descending order
+        const sortedOrders = data.orders.sort((a, b) => b.id - a.id);
+
+        setOrders(sortedOrders);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -85,8 +89,7 @@ const OrdersList = () => {
           <Table variant="simple">
             <Thead>
               <Tr>
-                <Th> ID-Iuran</Th>
-               
+                <Th>ID-Iuran</Th>
                 <Th>Payment Method</Th>
                 <Th>User ID</Th>
                 <Th>Payment Month</Th>
@@ -97,7 +100,6 @@ const OrdersList = () => {
               {orders.map(order => (
                 <Tr key={order.id}>
                   <Td>{order.id}</Td>
-                 
                   <Td>{order.metode_pembayaran}</Td>
                   <Td>{order.user_id}</Td>
                   <Td>{order.bulan_bayar}</Td>
