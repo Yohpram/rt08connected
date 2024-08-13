@@ -16,7 +16,11 @@ const SurketList = () => {
         }
 
         const data = await getAllSurket(token);
-        setSurkets(data.surkets);
+
+        // Sort surkets by id in descending order
+        const sortedSurkets = data.surkets.sort((a, b) => b.id - a.id);
+
+        setSurkets(sortedSurkets);
         setLoading(false);
       } catch (error) {
         setError(error.message);
@@ -72,7 +76,7 @@ const SurketList = () => {
               <Text><strong>Agama:</strong> {surket.agama}</Text>
               <Text><strong>Keperluan:</strong> {surket.keperluan}</Text>
               <Text><strong>Jenis Kelamin:</strong> {surket.gender}</Text>
-              <Text><strong>User ID:</strong> {surket.user_id}</Text> 
+              <Text><strong>User ID:</strong> {surket.user_id}</Text>
               <Text><strong>Dibuat Pada:</strong> {new Date(surket.created_at).toLocaleDateString()}</Text>
             </Stack>
           </ListItem>
