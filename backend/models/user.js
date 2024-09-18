@@ -11,6 +11,27 @@ const getUserbyid = async (id) => {
     return result.rows[0];
 };
 
+const updatePassword = async (id, newPassword) => {
+    try {
+        const result = await pool.query('UPDATE users SET password = $1 WHERE id = $2 RETURNING *', [newPassword, id]);
+        return result.rows[0];
+    } catch (error) {
+        throw new Error(`Error updating password: ${error.message}`);
+    }
+};
+
+const updateUserDetails = async (id, { username, nik, alamat, no_telp }) => {
+    try {
+        const result = await pool.query(
+            'UPDATE users SET username = $1, nik = $2, alamat = $3, no_telp = $4 WHERE id = $5 RETURNING *',
+            [username, nik, alamat, no_telp, id]
+        );
+        return result.rows[0];
+    } catch (error) {
+        throw new Error(`Error updating user details: ${error.message}`);
+    }
+};
+
 const getUserByUsernameOrEmail = async (identifier) => {
     const result = await pool.query('SELECT * FROM users WHERE username = $1 OR email = $1', [identifier]);
     return result.rows[0];
@@ -36,5 +57,5 @@ const createUser = async ({ username, email, nik, alamat,no_telp, password }) =>
 };
 
 module.exports = {
-     getAllUser, getUserByUsernameOrEmail, doesEmailExist, createUser, getUserbyid
+     getAllUser, getUserByUsernameOrEmail, doesEmailExist, createUser, getUserbyid, updatePassword, updateUserDetails
 };
