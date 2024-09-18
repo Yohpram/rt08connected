@@ -8,11 +8,11 @@ async function registerUser(username, email, password, nik, alamat, no_telp) {
       password,
       nik,
       alamat,
-      no_telp
+      no_telp,
     });
     return response.data;
   } catch (error) {
-    throw new Error(error.response.data.message || "Something went wrong");
+    throw new Error(error.response?.data?.message || "Something went wrong");
   }
 }
 
@@ -21,9 +21,10 @@ async function loginUser(email, password) {
     const response = await instance.post("/login", { email, password });
     return response.data;
   } catch (error) {
-    throw new Error(error.response.data.message || "Something went wrong");
+    throw new Error(error.response?.data?.message || "Something went wrong");
   }
 }
+
 
 async function getAllProduct() {
   try {
@@ -31,9 +32,11 @@ async function getAllProduct() {
     console.log("Response data:", response.data);
     return response.data;
   } catch (error) {
-    throw new Error(error.response.data.message || "Something went wrong");
+    throw new Error(error.response?.data?.message || "Something went wrong");
   }
 }
+
+
 
 async function getProductById(id) {
   try {
@@ -41,7 +44,7 @@ async function getProductById(id) {
     console.log("Response data:", response.data);
     return response.data;
   } catch (error) {
-    throw new Error(error.response.data.message || "Something went wrong");
+    throw new Error(error.response?.data?.message || "Something went wrong");
   }
 }
 
@@ -55,7 +58,7 @@ async function createOrder(formData, token) {
     });
     return response.data;
   } catch (error) {
-    throw new Error(error.response.data.message || "Something went wrong");
+    throw new Error(error.response?.data?.message || "Something went wrong");
   }
 }
 
@@ -65,7 +68,7 @@ async function getUserbyid(id) {
     console.log('Response data:', response.data); 
     return response.data;
   } catch (error) {
-    throw new Error(error.response.data.message || 'Something went wrong');
+    throw new Error(error.response?.data?.message || 'Something went wrong');
   }
 }
 
@@ -79,73 +82,59 @@ async function getOrdersByUserId(user_id, token) {
     console.log(response.data); 
     return response.data;
   } catch (error) {
-    throw new Error(error.response.data.message || 'Something went wrong');
+    throw new Error(error.response?.data?.message || 'Something went wrong');
   }
 }
 
-async function getReviewsByProductId(productId) {
+// Fetch function to get all reviews
+async function getAllReviews() {
   try {
-    const response = await instance.get(`/produk/${productId}/reviews`);
+    const response = await instance.get('/reviews');
     console.log('Response data:', response.data);
-
-    const reviewsWithCreatedAt = response.data.map((review) => ({
-      ...review,
-      created_at: review.created_at,
-    }));
-
-    return reviewsWithCreatedAt;
+    return response.data;
   } catch (error) {
     console.error('Error fetching reviews:', error.response);
-    throw new Error(error.response.data.message || 'Something went wrong');
+    throw new Error(error.response?.data?.message || 'Something went wrong');
   }
 }
 
-async function addReviewByProductId(productId, review, token) {
+// Fetch function to add a review
+async function addReview(review, token) {
   try {
-    const response = await instance.post(`/produk/${productId}/reviews`, { review },
-      {
-        headers: {
-          'x-auth-token': token,
-        },
+    const response = await instance.post('/reviews', { review }, {
+      headers: {
+        'x-auth-token': token,
       },
-      console.log(token)
-    );
+    });
     console.log('Response data:', response.data);
     return response.data;
   } catch (error) {
-    throw new Error(error.response.data.message || 'Something went wrong');
+    console.error('Error adding review:', error.response);
+    throw new Error(error.response?.data?.message || 'Something went wrong');
   }
 }
-  
-async function fetchReviews(productId) {
+
+// Fetch function to update a review
+async function putReview(reviewId, updatedReview) {
   try {
-    const response = await instance.get(`/produk/${productId}/reviews`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching reviews:', error);
-    throw error;
-  }
-}
-  
-async function putReview(productId, reviewId, updatedReview) {
-  try {
-    const response = await instance.put(`/produk/${productId}/reviews/${reviewId}`, {
+    const response = await instance.put(`/reviews/${reviewId}`, {
       review: updatedReview,
     });
     return response.data;
   } catch (error) {
-    console.error('Error updating review:', error);
-    throw error;
+    console.error('Error updating review:', error.response);
+    throw new Error(error.response?.data?.message || 'Something went wrong');
   }
 }
-  
-async function deleteReview(productId, reviewId) {
+
+// Fetch function to delete a review
+async function deleteReview(reviewId) {
   try {
-    const response = await instance.delete(`/produk/${productId}/reviews/${reviewId}`);
+    const response = await instance.delete(`/reviews/${reviewId}`);
     return response.data;
   } catch (error) {
-    console.error('Error deleting review:', error);
-    throw error;
+    console.error('Error deleting review:', error.response);
+    throw new Error(error.response?.data?.message || 'Something went wrong');
   }
 }
 
@@ -159,7 +148,7 @@ async function createSurket(nik, nama, tempat_lahir, tanggal_lahir, alamat, agam
     }});
     return response.data;
   } catch (error) {
-    throw new Error(error.response.data.message || "Something went wrong");
+    throw new Error(error.response?.data?.message || "Something went wrong");
   }
 }
 
@@ -202,11 +191,9 @@ async function getAllOrders(token) {
     });
     return response.data;
   } catch (error) {
-    throw new Error(error.response.data.message || 'Something went wrong');
+    throw new Error(error.response?.data?.message || 'Something went wrong');
   }
 }
-
-
 
 async function createpesan(user_id, pesan, file) {
   try {
@@ -224,7 +211,7 @@ async function createpesan(user_id, pesan, file) {
     });
     return response.data;
   } catch (error) {
-    throw new Error(error.response.data.message || "Something went wrong");
+    throw new Error(error.response?.data?.message || "Something went wrong");
   }
 }
 
@@ -237,7 +224,7 @@ async function getAllSurket(token) {
     });
     return response.data;
   } catch (error) {
-    throw new Error(error.response.data.message || 'Something went wrong');
+    throw new Error(error.response?.data?.message || 'Something went wrong');
   }
 }
 
@@ -250,7 +237,37 @@ async function getAllUser(token) {
     });
     return response.data;
   } catch (error) {
-    throw new Error(error.response.data.message || 'Something went wrong');
+    throw new Error(error.response?.data?.message || 'Something went wrong');
+  }
+}
+
+async function updatePassword(id, oldPassword, newPassword) {
+  try {
+    const response = await instance.patch(`/user/${id}/password`, {
+      oldPassword,
+      newPassword,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message || "Something went wrong");
+  }
+}
+
+async function updateUser(id, username, nik, alamat, no_telp, token) {
+  try {
+    const response = await instance.patch(`/user/${id}/details`, {
+      username,
+      nik,
+      alamat,
+      no_telp,
+    }, {
+      headers: {
+        'x-auth-token': token,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message || "Something went wrong");
   }
 }
 
@@ -267,17 +284,18 @@ export {
   getOrdersByUserId,
   registerUser,
   createOrder,
-  getReviewsByProductId,
-  addReviewByProductId,
-  fetchReviews,
+  getAllReviews,
+  addReview,
   putReview,
   deleteReview,
-  createSurket, // Export fungsi Surket
+  createSurket,
   getSurketsByUserId,
   createpesan,
-  getpesanByUserId, // Export fungsi Surket
-  isAuthenticated,// Export fungsi untuk memeriksa autentikasi
-   getAllOrders,
-   getAllSurket,
-   getAllUser
+  getpesanByUserId,
+  isAuthenticated,
+  getAllOrders,
+  getAllSurket,
+  getAllUser,
+  updatePassword,
+  updateUser,
 };
