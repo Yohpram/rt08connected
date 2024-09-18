@@ -12,7 +12,7 @@ import {
   Divider,
   Heading,
 } from "@chakra-ui/react";
-import { getReviewsByProductId, addReviewByProductId, putReview, deleteReview } from "../modules/fetch/index";
+import { getAllReviews, addReview, putReview, deleteReview } from "../modules/fetch/index";
 import {jwtDecode} from 'jwt-decode';
 
 const ReviewsComponent = () => {
@@ -22,7 +22,6 @@ const ReviewsComponent = () => {
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [editedReview, setEditedReview] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
-  const productId = "36";
 
   useEffect(() => {
     fetchReviews();
@@ -41,21 +40,11 @@ const ReviewsComponent = () => {
 
   const fetchReviews = async () => {
     try {
-      const fetchedReviews = await getReviewsByProductId(productId);
+      const fetchedReviews = await getAllReviews();
       const displayedReviews = fetchedReviews.slice(-5);
       setReviews(displayedReviews);
     } catch (error) {
       console.error("Error fetching reviews:", error);
-    }
-  };
-
-  const decodeToken = (token) => {
-    try {
-      const decoded = jwtDecode(token);
-      return decoded;
-    } catch (error) {
-      console.error('Error decoding token:', error);
-      return null;
     }
   };
 
@@ -64,80 +53,54 @@ const ReviewsComponent = () => {
 
     try {
       if (token) {
-        const decodedToken = decodeToken(token);
+        const decodedToken = jwtDecode(token);
 
         if (decodedToken) {
           const username = decodedToken.username;
 
-          const addedReview = await addReviewByProductId(productId, newReview, token);
+          const addedReview = await addReview(newReview, token);
           setReviews([...reviews.slice(-5), { ...addedReview.review, username }]);
           setNewReview('');
-          setAlertData({ type: 'success', message: 'comment added successfully!' });
+          setAlertData({ type: 'success', message: 'Review added successfully!' });
         } else {
-          console.error('Invalid token');
-          setAlertData({
-            type: 'error',
-            message: 'Invalid token. Please log in again.',
-          });
+          setAlertData({ type: 'error', message: 'Invalid token. Please log in again.' });
         }
       } else {
-        console.error('No token available');
-        setAlertData({
-          type: 'error',
-          message: 'Authentication token not found. Please log in.',
-        });
+        setAlertData({ type: 'error', message: 'Authentication token not found. Please log in.' });
       }
     } catch (error) {
-      console.error('Error adding comment:', error);
-      setAlertData({
-        type: 'error',
-        message: 'Failed to add comment. Please try again.',
-      });
+      setAlertData({ type: 'error', message: 'Failed to add review. Please try again.' });
     }
   };
 
   const handleEditReview = async (reviewId, updatedReview) => {
     try {
-      await putReview(productId, reviewId, updatedReview);
+      await putReview(reviewId, updatedReview);
       const updatedReviews = reviews.map((review) =>
         review.id === reviewId ? { ...review, review: updatedReview } : review
       );
       setReviews(updatedReviews);
-      setAlertData({
-        type: "success",
-        message: "Review updated successfully!",
-      });
+      setAlertData({ type: "success", message: "Review updated successfully!" });
       setEditingReviewId(null);
       setNewReview("");
     } catch (error) {
-      console.error("Error updating review:", error);
-      setAlertData({
-        type: "error",
-        message: "Failed to update review. Please try again.",
-      });
+      setAlertData({ type: "error", message: "Failed to update review. Please try again." });
     }
   };
 
   const handleDeleteReview = async (reviewId) => {
     try {
-      await deleteReview(productId, reviewId);
+      await deleteReview(reviewId);
       const updatedReviews = reviews.filter((review) => review.id !== reviewId);
       setReviews(updatedReviews);
-      setAlertData({
-        type: "success",
-        message: "Review deleted successfully!",
-      });
+      setAlertData({ type: "success", message: "Review deleted successfully!" });
     } catch (error) {
-      console.error("Error deleting review:", error);
-      setAlertData({
-        type: "error",
-        message: "Failed to delete review. Please try again.",
-      });
+      setAlertData({ type: "error", message: "Failed to delete review. Please try again." });
     }
   };
 
   return (
-    <Box width="100%" padding={4} borderRadius="xl" style={{ overflowY: 'auto', maxHeight: '100%' }}>
+    <Box width="100%" padding={4} borderRadius="xl">
       <VStack spacing={4} alignItems="stretch">
         <Heading as="h2" size="md" mb={4}>
           Saran & Layanan Warga
@@ -238,7 +201,7 @@ const ReviewsComponent = () => {
             border="1px solid gray"
             onClick={handleSubmitReview}
           >
-            Submit 
+            Submit
           </Button>
         </HStack>
       </VStack>
