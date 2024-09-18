@@ -13,8 +13,50 @@ class UserController {
             res.status(500).json({ message: "Internal Server Error" });
         }
     }
+    static async updatePassword(req, res) {
+        const { id } = req.params;
+        const { oldPassword, newPassword } = req.body;
 
-  
+        try {
+            // Get user from database
+            const user = await userModel.getUserbyid(id);
+            if (!user) return res.status(404).json({ message: 'User not found' });
+
+            // Check if the old password matches
+            const validOldPassword = await bcrypt.compare(oldPassword, user.password);
+            if (!validOldPassword) return res.status(400).json({ message: 'Old password is incorrect' });
+
+            // Hash the new password
+            const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+            // Update the user with the new password
+            const updatedUser = await userModel.updatePassword(id, hashedNewPassword);
+
+            res.status(200).json({ message: 'Password updated successfully', data: updatedUser });
+        } catch (error) {
+            console.error('Error updating password:', error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+    static async updateUserDetails(req, res) {
+        const { id } = req.params;
+        const { username, nik, alamat, no_telp } = req.body;
+    
+        try {
+            // Check if the user exists
+            const user = await userModel.getUserbyid(id);
+            if (!user) return res.status(404).json({ message: 'User not found' });
+    
+            // Update the user details
+            const updatedUser = await userModel.updateUserDetails(id, { username, nik, alamat, no_telp });
+    
+            res.status(200).json({ message: 'User details updated successfully', data: updatedUser });
+        } catch (error) {
+            console.error('Error updating user details:', error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
+    
     static async getUserbyid(req, res) {
         const { id } = req.params;
 
